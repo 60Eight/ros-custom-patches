@@ -7,5 +7,7 @@
 00007-use-cloudflare-dns.patch
 00008-disable-supl-agps.patch
 00009-enable-WiFi-and-4G-calling.patch
-99998-location-provider.patch
+00010-backup-any-application.patch
+10001-move-statusbar-clock-back-to-rhs.patch
+10002-navbar-changes.patch
 99999-microg-sigspoof.patch

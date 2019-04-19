@@ -10,16 +10,6 @@ diff --git a/frameworks/base/core/java/android/content/pm/PackageParser.java b/f
              new PackageParser.NewPermissionInfo(android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
                      android.os.Build.VERSION_CODES.DONUT, 0),
              new PackageParser.NewPermissionInfo(android.Manifest.permission.READ_PHONE_STATE,
-@@ -3347,8 +3347,7 @@ public class PackageParser {
-                     outError);
-         }
-
--        boolean allowBackup = sa.getBoolean(
--                com.android.internal.R.styleable.AndroidManifestApplication_allowBackup, true);
-+        boolean allowBackup = true;
-         if (allowBackup) {
-             ai.flags |= ApplicationInfo.FLAG_ALLOW_BACKUP;
-
 diff --git a/frameworks/base/core/res/AndroidManifest.xml b/frameworks/base/core/res/AndroidManifest.xml
 --- a/frameworks/base/core/res/AndroidManifest.xml
 +++ b/frameworks/base/core/res/AndroidManifest.xml

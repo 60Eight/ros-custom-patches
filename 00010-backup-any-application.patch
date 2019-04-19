@@ -1,3 +1,14 @@
+diff --git a/frameworks/base/core/java/android/content/pm/PackageParser.java b/frameworks/base/core/java/android/content/pm/PackageParser.java
+@@ -3347,8 +3347,7 @@ public class PackageParser {
+                     outError);
+         }
+
+-        boolean allowBackup = sa.getBoolean(
+-                com.android.internal.R.styleable.AndroidManifestApplication_allowBackup, true);
++        boolean allowBackup = true;
+         if (allowBackup) {
+             ai.flags |= ApplicationInfo.FLAG_ALLOW_BACKUP;
+
 diff --git a/frameworks/base/services/backup/java/com/android/server/backup/utils/AppBackupUtils.java b/frameworks/base/services/backup/java/com/android/server/backup/utils/AppBackupUtils.java
 --- a/frameworks/base/services/backup/java/com/android/server/backup/utils/AppBackupUtils.java
 +++ b/frameworks/base/services/backup/java/com/android/server/backup/utils/AppBackupUtils.java

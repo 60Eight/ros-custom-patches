@@ -2,7 +2,7 @@ diff --git a/frameworks/base/services/backup/java/com/android/server/backup/util
 index c39cceb538c..64da5ce0346 100644
 --- a/frameworks/base/services/backup/java/com/android/server/backup/utils/AppBackupUtils.java
 +++ b/frameworks/base/services/backup/java/com/android/server/backup/utils/AppBackupUtils.java
-@@ -55,10 +55,6 @@ public class AppBackupUtils {
+@@ -48,10 +48,6 @@ public class AppBackupUtils {
       * </ol>
       */
      public static boolean appIsEligibleForBackup(ApplicationInfo app, PackageManager pm) {
@@ -10,9 +10,9 @@ index c39cceb538c..64da5ce0346 100644
 -        if ((app.flags & ApplicationInfo.FLAG_ALLOW_BACKUP) == 0) {
 -            return false;
 -        }
-
          // 2. they run as a system-level uid but do not supply their own backup agent
          if ((app.uid < Process.FIRST_APPLICATION_UID) && (app.backupAgentName == null)) {
+             return false;
 diff --git a/frameworks/base/services/core/java/com/android/server/pm/ShortcutPackageInfo.java b/frameworks/base/services/core/java/com/android/server/pm/ShortcutPackageInfo.java
 index 8c7871ffaf9..caa78eca023 100644
 --- a/frameworks/base/services/core/java/com/android/server/pm/ShortcutPackageInfo.java

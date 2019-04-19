@@ -14,8 +14,8 @@ diff --git a/frameworks/base/core/java/android/content/pm/PackageParser.java b/f
 index 2da2cb4c928..531bbca8fc6 100644
 --- a/frameworks/base/core/java/android/content/pm/PackageParser.java
 +++ b/frameworks/base/core/java/android/content/pm/PackageParser.java
-@@ -255,6 +255,8 @@ public class PackageParser {
-     @UnsupportedAppUsage
+@@ -251,6 +251,8 @@ public class PackageParser {
+      */
      public static final PackageParser.NewPermissionInfo NEW_PERMISSIONS[] =
          new PackageParser.NewPermissionInfo[] {
 +            new PackageParser.NewPermissionInfo(android.Manifest.permission.OTHER_SENSORS,
@@ -23,7 +23,7 @@ index 2da2cb4c928..531bbca8fc6 100644
              new PackageParser.NewPermissionInfo(android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
                      android.os.Build.VERSION_CODES.DONUT, 0),
              new PackageParser.NewPermissionInfo(android.Manifest.permission.READ_PHONE_STATE,
-@@ -2990,8 +2992,7 @@ public class PackageParser {
+@@ -2968,8 +2970,7 @@ public class PackageParser {
              ai.manageSpaceActivityName = buildClassName(pkgName, manageSpaceActivity,
                      outError);
          }

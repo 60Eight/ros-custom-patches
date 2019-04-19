@@ -1,4 +1,3 @@
-diff --git a/frameworks/base/core/res/res/values/config.xml b/frameworks/base/core/res/res/values/config.xml
 --- a/frameworks/base/core/res/res/values/config.xml
 +++ b/frameworks/base/core/res/res/values/config.xml
 @@ -2786,10 +2786,10 @@

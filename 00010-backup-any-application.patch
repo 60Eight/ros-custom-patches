@@ -1,5 +1,4 @@
 diff --git a/frameworks/base/services/backup/java/com/android/server/backup/utils/AppBackupUtils.java b/frameworks/base/services/backup/java/com/android/server/backup/utils/AppBackupUtils.java
-index c39cceb538c..64da5ce0346 100644
 --- a/frameworks/base/services/backup/java/com/android/server/backup/utils/AppBackupUtils.java
 +++ b/frameworks/base/services/backup/java/com/android/server/backup/utils/AppBackupUtils.java
 @@ -48,10 +48,6 @@ public class AppBackupUtils {
@@ -14,7 +13,6 @@ index c39cceb538c..64da5ce0346 100644
          if ((app.uid < Process.FIRST_APPLICATION_UID) && (app.backupAgentName == null)) {
              return false;
 diff --git a/frameworks/base/services/core/java/com/android/server/pm/ShortcutPackageInfo.java b/frameworks/base/services/core/java/com/android/server/pm/ShortcutPackageInfo.java
-index 8c7871ffaf9..caa78eca023 100644
 --- a/frameworks/base/services/core/java/com/android/server/pm/ShortcutPackageInfo.java
 +++ b/frameworks/base/services/core/java/com/android/server/pm/ShortcutPackageInfo.java
 @@ -84,7 +84,7 @@ class ShortcutPackageInfo {
@@ -27,7 +25,6 @@ index 8c7871ffaf9..caa78eca023 100644
      }
 
 diff --git a/frameworks/base/services/core/java/com/android/server/pm/ShortcutService.java b/frameworks/base/services/core/java/com/android/server/pm/ShortcutService.java
-index b9c30489042..70836efecdf 100644
 --- a/frameworks/base/services/core/java/com/android/server/pm/ShortcutService.java
 +++ b/frameworks/base/services/core/java/com/android/server/pm/ShortcutService.java
 @@ -3535,7 +3535,7 @@ public class ShortcutService extends IShortcutService.Stub {

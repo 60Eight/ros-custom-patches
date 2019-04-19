@@ -1,8 +1,7 @@
 diff --git a/frameworks/base/core/java/android/content/pm/PackageParser.java b/frameworks/base/core/java/android/content/pm/PackageParser.java
-index 1ab64b4..c8059a7 100644
 --- a/frameworks/base/core/java/android/content/pm/PackageParser.java
 +++ b/frameworks/base/core/java/android/content/pm/PackageParser.java
-@@ -2990,8 +2990,7 @@ public class PackageParser {
+@@ -3347,8 +3347,7 @@ public class PackageParser {
              ai.manageSpaceActivityName = buildClassName(pkgName, manageSpaceActivity,
                      outError);
          }
@@ -14,10 +13,9 @@ index 1ab64b4..c8059a7 100644
              // backupAgent, killAfterRestore, fullBackupContent, backupInForeground,
 
 diff --git a/frameworks/base/services/backup/java/com/android/server/backup/utils/AppBackupUtils.java b/frameworks/base/services/backup/java/com/android/server/backup/utils/AppBackupUtils.java
-index 485fc3d..0afacae 100644
 --- a/frameworks/base/services/backup/java/com/android/server/backup/utils/AppBackupUtils.java
 +++ b/frameworks/base/services/backup/java/com/android/server/backup/utils/AppBackupUtils.java
-@@ -48,10 +48,6 @@ public class AppBackupUtils {
+@@ -55,10 +55,6 @@ public class AppBackupUtils {
       * </ol>
       */
      public static boolean appIsEligibleForBackup(ApplicationInfo app, PackageManager pm) {
@@ -44,10 +42,9 @@ index e8f8a13..67d6f8c 100644
      public static ShortcutPackageInfo newEmpty() {
 
 diff --git a/frameworks/base/services/core/java/com/android/server/pm/ShortcutService.java b/frameworks/base/services/core/java/com/android/server/pm/ShortcutService.java
-index a98cf6b..b25bd7e 100644
 --- a/frameworks/base/services/core/java/com/android/server/pm/ShortcutService.java
 +++ b/frameworks/base/services/core/java/com/android/server/pm/ShortcutService.java
-@@ -2991,7 +2991,7 @@ public class ShortcutService extends IShortcutService.Stub {
+@@ -3535,7 +3535,7 @@ public class ShortcutService extends IShortcutService.Stub {
          return isApplicationFlagSet(packageName, userId, ApplicationInfo.FLAG_ALLOW_BACKUP);
      }
      static boolean shouldBackupApp(PackageInfo pi) {

@@ -18,7 +18,8 @@ diff --git a/frameworks/base/core/java/android/content/pm/PackageParser.java b/f
 -                com.android.internal.R.styleable.AndroidManifestApplication_allowBackup, true);
 +        boolean allowBackup = true;
          if (allowBackup) {
-ai.flags |= ApplicationInfo.FLAG_ALLOW_BACKUP; 
+             ai.flags |= ApplicationInfo.FLAG_ALLOW_BACKUP;
+
 diff --git a/frameworks/base/core/res/AndroidManifest.xml b/frameworks/base/core/res/AndroidManifest.xml
 --- a/frameworks/base/core/res/AndroidManifest.xml
 +++ b/frameworks/base/core/res/AndroidManifest.xml

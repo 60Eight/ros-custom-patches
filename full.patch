@@ -1,0 +1,174 @@
+diff --git a/core/java/android/app/admin/DevicePolicyManager.java b/core/java/android/app/admin/DevicePolicyManager.java
+index 441ff6ba464..688f1cb66ed 100644
+--- a/core/java/android/app/admin/DevicePolicyManager.java
++++ b/core/java/android/app/admin/DevicePolicyManager.java
+@@ -3367,7 +3367,7 @@ public class DevicePolicyManager {
+             return 0;
+         }
+         // Kind-of arbitrary.
+-        return 16;
++        return 64;
+     }
+ 
+     /**
+diff --git a/core/java/android/content/pm/PackageParser.java b/core/java/android/content/pm/PackageParser.java
+index 5c5c13d566c..f4a33e745dd 100644
+--- a/core/java/android/content/pm/PackageParser.java
++++ b/core/java/android/content/pm/PackageParser.java
+@@ -3488,8 +3488,7 @@ public class PackageParser {
+                     outError);
+         }
+ 
+-        boolean allowBackup = sa.getBoolean(
+-                com.android.internal.R.styleable.AndroidManifestApplication_allowBackup, true);
++        boolean allowBackup = true;
+         if (allowBackup) {
+             ai.flags |= ApplicationInfo.FLAG_ALLOW_BACKUP;
+ 
+diff --git a/core/res/AndroidManifest.xml b/core/res/AndroidManifest.xml
+index 216b87f89b9..9e79c108ea7 100644
+--- a/core/res/AndroidManifest.xml
++++ b/core/res/AndroidManifest.xml
+@@ -2652,6 +2652,13 @@
+         android:description="@string/permdesc_getPackageSize"
+         android:protectionLevel="normal" />
+ 
++    <!-- @hide Allows an application to change the package signature as
++         seen by applications -->
++    <permission android:name="android.permission.FAKE_PACKAGE_SIGNATURE"
++        android:protectionLevel="signature|privileged"
++        android:label="@string/permlab_fakePackageSignature"
++        android:description="@string/permdesc_fakePackageSignature" />
++
+     <!-- @deprecated No longer useful, see
+          {@link android.content.pm.PackageManager#addPackageToPreferred}
+          for details. -->
+diff --git a/core/res/res/values/config.xml b/core/res/res/values/config.xml
+index 4b4baa9c158..779c63bf59b 100644
+--- a/core/res/res/values/config.xml
++++ b/core/res/res/values/config.xml
+@@ -225,7 +225,7 @@
+          dozing).  This should be enabled if you have such services and expect apps to
+          correctly use them when installed on your device.  Otherwise, keep this disabled
+          so that applications can still use their own mechanisms. -->
+-    <bool name="config_enableAutoPowerModes">false</bool>
++    <bool name="config_enableAutoPowerModes">true</bool>
+ 
+     <!-- Whether (if true) this is a kind of device that can be moved around (eg. phone/laptop),
+          or (if false) something for which movement is either not measurable or should not count
+@@ -775,7 +775,7 @@
+     <bool name="config_adaptive_sleep_available">false</bool>
+ 
+     <!-- Flag indicating whether we should enable smart battery. -->
+-    <bool name="config_smart_battery_available">false</bool>
++    <bool name="config_smart_battery_available">true</bool>
+ 
+     <!-- Fast brightness animation ramp rate in brightness units per second-->
+     <integer translatable="false" name="config_brightness_ramp_rate_fast">180</integer>
+@@ -1892,6 +1892,8 @@
+     <string-array name="config_locationProviderPackageNames" translatable="false">
+         <!-- The standard AOSP fused location provider -->
+         <item>com.android.location.fused</item>
++        <!-- The (faked) microg fused location provider (a free reimplementation) -->
++        <item>com.google.android.gms</item>
+     </string-array>
+ 
+     <!-- This string array can be overriden to enable test location providers initially. -->
+diff --git a/core/res/res/values/strings.xml b/core/res/res/values/strings.xml
+index e729b03c1b8..b59aede3fab 100644
+--- a/core/res/res/values/strings.xml
++++ b/core/res/res/values/strings.xml
+@@ -830,6 +830,11 @@
+ 
+     <!--  Permissions -->
+ 
++    <!-- Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
++    <string name="permlab_fakePackageSignature">Spoof package signature</string>
++    <!-- Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
++    <string name="permdesc_fakePackageSignature">Allows the app to pretend to be a different app. Malicious applications might be able to use this to access private application data. Legitimate uses include an emulator pretending to be what it emulates. Grant this permission with caution only!</string>
++
+     <!-- Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+     <string name="permlab_statusBar">disable or modify status bar</string>
+     <!-- Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+diff --git a/services/backup/java/com/android/server/backup/utils/AppBackupUtils.java b/services/backup/java/com/android/server/backup/utils/AppBackupUtils.java
+index 35dfccf3292..7b2ac6bdec4 100644
+--- a/services/backup/java/com/android/server/backup/utils/AppBackupUtils.java
++++ b/services/backup/java/com/android/server/backup/utils/AppBackupUtils.java
+@@ -72,10 +72,6 @@ public class AppBackupUtils {
+     @VisibleForTesting
+     static boolean appIsEligibleForBackup(
+             ApplicationInfo app, PackageManagerInternal packageManager, int userId) {
+-        // 1. their manifest states android:allowBackup="false"
+-        if ((app.flags & ApplicationInfo.FLAG_ALLOW_BACKUP) == 0) {
+-            return false;
+-        }
+ 
+         // 2. they run as a system-level uid
+         if (UserHandle.isCore(app.uid)) {
+diff --git a/services/core/java/com/android/server/pm/PackageManagerService.java b/services/core/java/com/android/server/pm/PackageManagerService.java
+index a77b7287115..794f3d30626 100644
+--- a/services/core/java/com/android/server/pm/PackageManagerService.java
++++ b/services/core/java/com/android/server/pm/PackageManagerService.java
+@@ -4127,8 +4127,9 @@ public class PackageManagerService extends IPackageManager.Stub
+             final Set<String> permissions = ArrayUtils.isEmpty(p.requestedPermissions)
+                     ? Collections.emptySet() : permissionsState.getPermissions(userId);
+ 
+-            PackageInfo packageInfo = PackageParser.generatePackageInfo(p, gids, flags,
+-                    ps.firstInstallTime, ps.lastUpdateTime, permissions, state, userId);
++            PackageInfo packageInfo = mayFakeSignature(p, PackageParser.generatePackageInfo(p, gids, flags,
++                    ps.firstInstallTime, ps.lastUpdateTime, permissions, state, userId),
++                    permissions);
+ 
+             if (packageInfo == null) {
+                 return null;
+@@ -4164,6 +4165,24 @@ public class PackageManagerService extends IPackageManager.Stub
+         }
+     }
+ 
++    private PackageInfo mayFakeSignature(PackageParser.Package p, PackageInfo pi,
++            Set<String> permissions) {
++        try {
++            if (permissions.contains("android.permission.FAKE_PACKAGE_SIGNATURE")
++                    && p.applicationInfo.targetSdkVersion > Build.VERSION_CODES.LOLLIPOP_MR1
++                    && p.mAppMetaData != null) {
++                String sig = p.mAppMetaData.getString("fake-signature");
++                if (sig != null) {
++                    pi.signatures = new Signature[] {new Signature(sig)};
++                }
++            }
++        } catch (Throwable t) {
++            // We should never die because of any failures, this is system code!
++            Log.w("PackageManagerService.FAKE_PACKAGE_SIGNATURE", t);
++        }
++        return pi;
++    }
++
+     @Override
+     public void checkPackageStartable(String packageName, int userId) {
+         final int callingUid = Binder.getCallingUid();
+diff --git a/services/core/java/com/android/server/pm/ShortcutPackageInfo.java b/services/core/java/com/android/server/pm/ShortcutPackageInfo.java
+index 8c7871ffaf9..caa78eca023 100644
+--- a/services/core/java/com/android/server/pm/ShortcutPackageInfo.java
++++ b/services/core/java/com/android/server/pm/ShortcutPackageInfo.java
+@@ -84,7 +84,7 @@ class ShortcutPackageInfo {
+         mLastUpdateTime = lastUpdateTime;
+         mIsShadow = isShadow;
+         mSigHashes = sigHashes;
+-        mBackupAllowed = false; // By default, we assume false.
++        mBackupAllowed = true; // By default, we assume true.
+         mBackupSourceBackupAllowed = false;
+     }
+ 
+diff --git a/services/core/java/com/android/server/pm/ShortcutService.java b/services/core/java/com/android/server/pm/ShortcutService.java
+index 2d8a2acd575..6312ee913b8 100644
+--- a/services/core/java/com/android/server/pm/ShortcutService.java
++++ b/services/core/java/com/android/server/pm/ShortcutService.java
+@@ -3575,7 +3575,7 @@ public class ShortcutService extends IShortcutService.Stub {
+     }
+ 
+     static boolean shouldBackupApp(PackageInfo pi) {
+-        return (pi.applicationInfo.flags & ApplicationInfo.FLAG_ALLOW_BACKUP) != 0;
++        return true;
+     }
+ 
+     @Override
